@@ -3,54 +3,54 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - main  # or your preferred branch name
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v2
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
-      
-      - name: Install Dependencies
+          node-version: 14  # Change to your desired Node.js version
+
+      - name: Install dependencies
         run: npm install
-      
-      - name: Build Application
-        run: npm run build
-      
-  test:
-    name: Test
+
+      - name: Build and test
+        run: |
+          npm run build
+          npm run test
+
+      - name: Deploy to staging
+        run: |
+          # Commands to deploy to staging environment
+          # For example, deploying to Azure App Service or any other platform
+
+  notify:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Notify on failure
+        if: failure()
+        uses: actions/slack@v5  # You can replace this with any desired notification service
         with:
-          node-version: '14'
-      
-      - name: Install Dependencies
-        run: npm install
-      
-      - name: Run Unit Tests
-        run: npm test
-      
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
+          status: failure
+          channel: your-slack-channel
+          text: |
+            :x: Build or deployment failed for branch ${{ github.ref }} in ${{ github.repository }}
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      
-      # Additional steps to deploy to a staging environment
-      # This could involve copying artifacts to the server, setting up the environment, etc.
+      - name: Notify on success
+        if: success()
+        uses: actions/slack@v5
+        with:
+          status: success
+          channel: your-slack-channel
+          text: |
+            :white_check_mark: Build and deployment successful for branch ${{ github.ref }} in ${{ github.repository }}
+
