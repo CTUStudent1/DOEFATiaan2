@@ -24,7 +24,6 @@ jobs:
       
       - name: Build Application
         run: npm run build
-        # Generate artifacts, if applicable
       
   test:
     name: Test
@@ -44,7 +43,6 @@ jobs:
       
       - name: Run Unit Tests
         run: npm test
-        # Run code quality checks, e.g., code coverage, code analysis
       
   deploy:
     name: Deploy
@@ -56,5 +54,3 @@ jobs:
       
       # Additional steps to deploy to a staging environment
       # This could involve copying artifacts to the server, setting up the environment, etc.
-
-
